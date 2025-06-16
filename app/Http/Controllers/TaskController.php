@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Todolist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    /**
-     * Отображает список всех задач
-     */
-    public function index()
+    public function __construct()
     {
-        $tasks = todolist::orderBy('created_at', 'asc')->get();
+        $this->middleware('auth');
+    }
+    public function index()//Отображаем все задачи
+    {
+        $tasks = Auth::user()->todolists()->orderBy('created_at', 'asc')->get();
         return view('index', compact('tasks'));
     }
 
@@ -25,7 +27,7 @@ class TaskController extends Controller
             'title' => 'required|max:255',
         ]);
 
-        todolist::create([
+        Auth::user()->todolists()->create([
             'title' => $validated['title'],
             'completed' => false
         ]);
@@ -38,6 +40,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Todolist $task)
     {
+        $this->authorize('update', $task);
         $task->update([
             'completed' => !$task->completed
         ]);
@@ -50,6 +53,7 @@ class TaskController extends Controller
      */
     public function destroy(Todolist $task)
     {
+        $this->authorize('delete', $task);
         $task->delete();
         return redirect()->route('tasks.index');
     }

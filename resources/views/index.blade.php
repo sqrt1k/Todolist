@@ -4,9 +4,17 @@
     <title>To-Do List</title>
     <style>
         .completed { text-decoration: line-through; color: #888; }
+        .user-info { float: right; }
     </style>
 </head>
 <body>
+     <div class="user-info">
+        Привет, {{ auth()->user()->name }}!
+        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit">Выйти</button>
+        </form>
+    </div>
     <h1>To-Do List</h1>
     
     @if ($errors->any())
