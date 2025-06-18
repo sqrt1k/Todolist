@@ -14,7 +14,10 @@ class TaskController extends Controller
     }
     public function index()//Отображаем все задачи
     {
-        $tasks = Auth::user()->todolists()->orderBy('created_at', 'asc')->get();
+        $tasks = Auth::user()->todolists()->orderBy('created_at', 'asc')->paginate(
+               $perPage = 10,
+               $columns = ['*'],
+               $pageName = 'tasks_page');
         return view('index', compact('tasks'));
     }
 
@@ -32,7 +35,8 @@ class TaskController extends Controller
             'completed' => false
         ]);
 
-        return redirect()->route('tasks.index');
+        return redirect()->back()
+        ->withInput(request()->except(['_method', '_token']));
     }
 
     /**
@@ -45,7 +49,7 @@ class TaskController extends Controller
             'completed' => !$task->completed
         ]);
 
-        return redirect()->route('tasks.index');
+        return redirect()->back();
     }
 
     /**
@@ -55,6 +59,10 @@ class TaskController extends Controller
     {
         $this->authorize('delete', $task);
         $task->delete();
+        return redirect()->back();
+    }
+    public function redirectToTasks()
+    {
         return redirect()->route('tasks.index');
     }
 }

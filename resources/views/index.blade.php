@@ -45,6 +45,8 @@
                         {{ $task->completed ? 'checked' : '' }}
                     >
                     {{ $task->title }}
+                    | Дата создания: {{ $task->created_at }}
+                   
                 </form>
                 
                 <form action="{{ route('tasks.destroy', $task) }}" method="POST" style="display: inline;">
@@ -54,6 +56,9 @@
                 </form>
             </li>
         @endforeach
+        <div class="mt-4">
+            {{ $tasks->links() }}
+        </div>
     </ul>
 </body>
 </html>
