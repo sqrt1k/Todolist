@@ -14,8 +14,8 @@ class TaskController extends Controller
     }
     public function index()//Отображаем все задачи
     {
-        $tasks = Auth::user()->todolists()->orderBy('created_at', 'asc')->paginate(
-               $perPage = 10,
+        $tasks = Auth::user()->todolists()->orderBy('dayofweek', 'asc')->paginate(
+               $perPage = 20,
                $columns = ['*'],
                $pageName = 'tasks_page');
         return view('index', compact('tasks'));
@@ -28,11 +28,13 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|max:255',
+            'dayofweek' => 'required|integer|min:1|max:7'
         ]);
 
         Auth::user()->todolists()->create([
             'title' => $validated['title'],
-            'completed' => false
+            'completed' => false,
+            'dayofweek' => $validated['dayofweek']
         ]);
 
         return redirect()->back()

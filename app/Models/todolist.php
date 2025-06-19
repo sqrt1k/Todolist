@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Todolist extends Model
 {
-     protected $fillable = ['title', 'completed', 'user_id'];
+     protected $fillable = ['title', 'completed','dayofweek', 'user_id'];
      
      public function user()
      {

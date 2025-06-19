@@ -30,11 +30,35 @@
     <form action="{{ route('tasks.store') }}" method="POST">
         @csrf
         <input type="text" name="title" placeholder="Новая задача">
+        <select name="dayofweek">
+            <option value="1">Понедельник</option>
+            <option value="2">Вторник</option>
+            <option value="3">Среда</option>
+            <option value="4">Четверг</option>
+            <option value="5">Пятница</option>
+            <option value="6">Суббота</option>
+            <option value="7">Воскресенье</option>
+        </select>
         <button type="submit">Добавить</button>
     </form>
     
     <ul>
+        @php
+            $lastday = null;
+        @endphp
+
         @foreach ($tasks as $task)
+        @if($task->dayofweek != $lastday)
+                @if($task->dayofweek==1) Понедельник
+                @elseif($task->dayofweek==2) Вторник
+                @elseif($task->dayofweek==3) Среда
+                @elseif($task->dayofweek==4) Четверг
+                @elseif($task->dayofweek==5) Пятница
+                @elseif($task->dayofweek==6) Суббота
+                @elseif($task->dayofweek==7) Воскресенье
+                @endif
+            @php $lastday = $task->dayofweek;@endphp
+        @endif
             <li class="{{ $task->completed ? 'completed' : '' }}">
                 <form action="{{ route('tasks.update', $task) }}" method="POST" style="display: inline;">
                     @csrf
