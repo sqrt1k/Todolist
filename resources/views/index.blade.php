@@ -6,10 +6,11 @@
         .completed { text-decoration: line-through; color: #888; }
         .user-info { float: right; }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
      <div class="user-info">
-        Привет, {{ auth()->user()->name }}!
+        Привет, {{ auth()->user()->name }}! <Br>
         <form action="{{ route('logout') }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit">Выйти</button>
@@ -26,10 +27,11 @@
             </ul>
         </div>
     @endif
-    
+    <div class="lists">
+        <div class="add">
     <form action="{{ route('tasks.store') }}" method="POST">
         @csrf
-        <input type="text" name="title" placeholder="Новая задача">
+        <input type="text" name="title" placeholder="Новая задача" size="50">
         <select name="dayofweek">
             <option value="1">Понедельник</option>
             <option value="2">Вторник</option>
@@ -41,7 +43,7 @@
         </select>
         <button type="submit">Добавить</button>
     </form>
-    
+    </div>
     <ul>
         @php
             $lastday = null;
@@ -49,6 +51,7 @@
 
         @foreach ($tasks as $task)
         @if($task->dayofweek != $lastday)
+        <li class="day-header">
                 @if($task->dayofweek==1) Понедельник
                 @elseif($task->dayofweek==2) Вторник
                 @elseif($task->dayofweek==3) Среда
@@ -57,9 +60,11 @@
                 @elseif($task->dayofweek==6) Суббота
                 @elseif($task->dayofweek==7) Воскресенье
                 @endif
+            </li>
             @php $lastday = $task->dayofweek;@endphp
         @endif
             <li class="{{ $task->completed ? 'completed' : '' }}">
+                <div class = "task-content">
                 <form action="{{ route('tasks.update', $task) }}" method="POST" style="display: inline;">
                     @csrf
                     @method('PATCH')
@@ -68,21 +73,23 @@
                         onChange="this.form.submit()" 
                         {{ $task->completed ? 'checked' : '' }}
                     >
-                    {{ $task->title }}
-                    | Дата создания: {{ $task->created_at }}
-                   
+                     <span class="task-title">{{ $task->title }}</span>
+                     <span class="task-date">| {{ $task->created_at->format('d.m.Y H:i') }}</span>
+
                 </form>
                 
-                <form action="{{ route('tasks.destroy', $task) }}" method="POST" style="display: inline;">
+                <form action="{{ route('tasks.destroy', $task) }}" method="POST" style="display: inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit">Удалить</button>
+                    <button type="submit" class="btn-delete" title="Удалить">🗑️</button>
                 </form>
+                </div>
             </li>
         @endforeach
         <div class="mt-4">
             {{ $tasks->links() }}
         </div>
     </ul>
+</div>
 </body>
 </html>
